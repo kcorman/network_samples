@@ -5,11 +5,19 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
 
+/**
+ * This is the server portion of the client-server version of NumGuesser. It waits for two clients to connect, figures out which one should be the picker,
+ * and then handles the guesser's guesses. It never writes the picked number to the guesser's server so it is more secure than NumGuesserSimple
+ */
 public class NumGuesserServer {
-	
+	private static final int PORT = 55555;
+
+	/**
+	 * Entry point for NumGuesserServer. It takes no arguments and listens on the port specified in the first line of the method.
+	 * Note that this port must match the port in NumGuesserClient for them to be able to connect
+	 */
 	public static void main(String[] arr) throws UnknownHostException, IOException {
-		int port = 43435;
-		ServerSocket sock = new ServerSocket(port);
+		ServerSocket sock = new ServerSocket(PORT);
 		// connect to first player
 		Socket p1 = sock.accept();
 		Socket p2 = sock.accept();
@@ -17,6 +25,13 @@ public class NumGuesserServer {
 		doGame(p1, p2);
 	}
 	
+	/**
+	 * Handles all the server-side logic of the game, including determining who is the picker, retrieving their number,
+	 * and retreiving guesses and comparing them to the picked number.
+	 * @param p1 Player 1's socket
+	 * @param p2 Player 2's socket
+	 * @throws IOException
+	 */
 	private static void doGame(Socket p1, Socket p2) throws IOException {
 		Socket picker;
 		Socket guesser;

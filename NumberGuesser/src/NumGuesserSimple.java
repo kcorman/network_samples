@@ -6,8 +6,23 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
-public class NumGuesserMainHacked {
+/**
+ * This NumGuesser class combines the client and server into one program. You use program arguments to specify whether you're listening for connections
+ * (aka server) or connecting (client). Note that once the connection is made, this is not really a client-server program but more of a peer-to-peer type
+ *
+ * See NumGuesserServer and NumGuesserClient for the true client-server version of this program
+ */
+public class NumGuesserSimple {
 	
+	/**
+	 * The entry point for the program. Arguments look like the following
+	 * For client: false 55555 localhost
+	 * For server: true 55555
+	 * 
+	 * If we run this in client mode from the command line, it would look like
+	 * java NumGuesserSimple false localhost 55555
+	 * @param arr the array of arguments
+	 */
 	public static void main(String[] arr) throws UnknownHostException, IOException {
 		boolean isServer = Boolean.parseBoolean(arr[0]);
 		int port = Integer.parseInt(arr[1]);
@@ -20,6 +35,11 @@ public class NumGuesserMainHacked {
 		}
 	}
 
+	/**
+	 * Handles the "server" setup
+	 * @param port the port the server listens on
+	 * @throws IOException
+	 */
 	private static void doServer(int port) throws IOException {
 		ServerSocket srvr = new ServerSocket(port);
 		Socket sock = srvr.accept();
@@ -27,19 +47,31 @@ public class NumGuesserMainHacked {
 		srvr.close();
 	}
 
+	/**
+	 * Handles the client setup
+	 * @param port the port of the remote server
+	 * @param host the host of the remote server, either ip address or hostname
+	 * @throws UnknownHostException
+	 * @throws IOException
+	 */
 	private static void doClient(int port, String host) throws UnknownHostException, IOException {
 		Socket sock = new Socket(host, port);
 		handleSocket(sock);
 		sock.close();
 	}
 
+	/**
+	 * The actual logic of the game. Note that both players will call into this method, but they get different behavior based on the random roll below
+	 * @param sock the socket to use for communicating to the other player
+	 * @throws IOException
+	 */
 	private static void handleSocket(Socket sock) throws IOException {
 		Scanner localUserInput = new Scanner(System.in);
 		// Figure out who is the guesser and who is the picker
 		// We'll accomplish this by having both parties send a random number over. Whoevers is highest will be declared
 		// the picker
-		System.out.println("Hacker!!");
-		double myRandomNumber = 0.0; // random double between 0.0 and 1.0
+		
+		double myRandomNumber = Math.random(); // random double between 0.0 and 1.0
 		
 		// To send this over, we need to use an abstraction called a DataOutputStream
 		DataOutputStream outputToRemoteServer = new DataOutputStream(sock.getOutputStream());
@@ -62,14 +94,24 @@ public class NumGuesserMainHacked {
 		}
 	}
 
+	/**
+	 * Handles the guesser portion of the game.
+	 * @param localUserInput a scanner for getting data from the local user (i.e. the human who is sitting in front of the monitor)
+	 * @param outputToRemoteServer a stream for sending data to the remote server
+	 * @param remoteServerInput a stream for reading data from the remote server
+	 * @throws IOException
+	 */
 	private static void doGuesser(Scanner localUserInput, DataOutputStream outputToRemoteServer, DataInputStream remoteServerInput) throws IOException {
 		System.out.println("You are the guesser. Please wait while your opponent picks a number.");
 		// We are the guesser. First read the number sent over by them
 		int numberToGuess = remoteServerInput.readInt();
-		System.out.println("The number to guess is: " + numberToGuess + " lol.");
+		
+		// We get the initial guess outside of the loop, and each subsequent guess inside the loop. This is because
+		// we want a different message for "retry" guesses and the initial guess
 		System.out.println("Guess the number.");
 		int guess = localUserInput.nextInt();
 		if(guess == numberToGuess) {
+			// rare case, the first guess is correct
 			System.out.println("Wow, you got it on the first try... hacker.");
 			outputToRemoteServer.writeInt(1);
 		} else {
@@ -89,6 +131,13 @@ public class NumGuesserMainHacked {
 		}
 	}
 
+	/**
+	 * Handles the picker portion of the game.
+	 * @param localUserInput a scanner for getting data from the local user (i.e. the human who is sitting in front of the monitor)
+	 * @param outputToRemoteServer a stream for sending data to the remote server
+	 * @param remoteServerInput a stream for reading data from the remote server
+	 * @throws IOException
+	 */
 	private static void doPicker(Scanner localUserInput, DataOutputStream outputToRemoteServer, DataInputStream remoteServerInput) throws IOException {
 		System.out.println("You are the picker. Choose a number between 1 and 100 (inclusive)");
 		int pickedNumber = localUserInput.nextInt();

@@ -5,10 +5,21 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+/**
+ * The client portion of the client-server NumGuesser game. This handles being a client for either a Picker or a Guesser. The server determines which it is randomly
+ * Note that you must run two instances of this before the server will start the game, as there is no single-player option
+ *
+ */
 public class NumGuesserClient {
+	private static final String HOST = "localhost";
+	private static final int PORT = 55555;
 
+	/**
+	 * Entry point for client. Does not take any arguments. Instead, to change the port or host to connect to,
+	 * change the values of the constants defined above and recompile. Keep in mind that the port must stay in sync with the server port
+	 */
 	public static void main(String[] args) throws UnknownHostException, IOException {
-		Socket s = new Socket("localhost", 43435);
+		Socket s = new Socket(HOST, PORT);
 		DataOutputStream output = new DataOutputStream(s.getOutputStream());
 		DataInputStream input = new DataInputStream(s.getInputStream());
 		Scanner userInput = new Scanner(System.in);
