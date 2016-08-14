@@ -11,7 +11,7 @@ import java.util.Scanner;
 import java.util.concurrent.Executors;
 
 public class Main {
-	
+
 	public static void main(String[] arr) throws UnknownHostException, IOException {
 		boolean isServer = Boolean.parseBoolean(arr[0]);
 		int port = Integer.parseInt(arr[1]);
