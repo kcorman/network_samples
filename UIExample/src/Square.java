@@ -6,6 +6,7 @@ public class Square {
 	private int y;
 	private int width;
 	private int height;
+	private Color color;
 	static int numCreated = 0;
 
 	public Square(int x, int y, int width, int height) {
@@ -13,6 +14,13 @@ public class Square {
 		this.y = y;
 		this.width = width;
 		this.height = height;
+		
+		if(Math.random() > .5) {
+			color = Color.RED;
+		} else {
+			color = Color.BLUE;
+		}
+		
 		numCreated++;
 	}
 
@@ -26,7 +34,7 @@ public class Square {
 	}
 
 	public void paintThisThing(Graphics g) {
-		g.setColor(Color.RED);
+		g.setColor(color);
 		g.fillRect(x, y, width, height);
 	}
 }
