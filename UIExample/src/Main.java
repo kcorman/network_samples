@@ -31,7 +31,7 @@ public class Main {
 			sq2.update();
 			Thread.sleep(100);
 			frame.repaint();
-			System.out.println("Squares created=" + Square.numCreated);
+			
 		}
 		
 		/*
