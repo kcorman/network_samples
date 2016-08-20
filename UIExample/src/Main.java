@@ -15,11 +15,11 @@ public class Main {
 		frame.setSize(800, 800);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		System.out.println("In main: creating new GamePanel");
 		GamePanel panel = new GamePanel();
 		
 		Square sq1 = new Square(100, 100, 300, 300);
 		panel.addSquare(sq1);
-		
 
 		Square sq2 = new Square(100, 500, 300, 300);
 		panel.addSquare(sq2);
